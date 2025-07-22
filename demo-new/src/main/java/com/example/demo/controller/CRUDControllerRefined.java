@@ -13,11 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.Item;
 import com.example.demo.service.ItemService;
 import com.example.demo.service.ItemServiceAnalysis;
-import com.example.demo.validation.ItemValidation;
-
 @RestController
-@RequestMapping("/demo/v2")
-public class CRUDController {
+@RequestMapping("/demo/v1")
+public class CRUDControllerRefined {
 
     private final Map<Long, String> dataStore = new ConcurrentHashMap<>();
     private final AtomicLong idCounter = new AtomicLong();
@@ -26,7 +24,7 @@ public class CRUDController {
     private final ItemService itemService;
     private final ItemServiceAnalysis itemServiceAnalysis;
 
-    public CRUDController(ItemService itemService, ItemServiceAnalysis itemServiceAnalysis){
+    public CRUDControllerRefined(ItemService itemService, ItemServiceAnalysis itemServiceAnalysis){
     	this.itemService = itemService;
     	this.itemServiceAnalysis = itemServiceAnalysis;
     	
@@ -50,9 +48,9 @@ public class CRUDController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getItemById(@PathVariable String id) {
-    	ItemValidation.parseAndValidateLongId(id);
-        String item = dataStore.get(Long.valueOf(id));
+    public ResponseEntity<String> getItemById(@PathVariable Long id) {
+//    	ItemValidation.parseAndValidateLongId(id);
+        String item = dataStore.get(id);
         if (item != null) {
             return new ResponseEntity<>("Found item with ID: " + id + " and data: " + item, HttpStatus.OK);
         }
@@ -89,7 +87,7 @@ public class CRUDController {
     }
 
     // ✅ --- SEARCH FUNCTION: GET ITEMS CONTAINING "demo" ---
-    @GetMapping("/demoItems2")
+    @GetMapping("/demoItems1")
     public ResponseEntity<List<Item>> getAllItemsWithDemo() {
         List<Item> demos = this.itemServiceAnalysis.getAllItemsWithDemo();
         return new ResponseEntity<>(demos, HttpStatus.OK);
